@@ -41,8 +41,17 @@ export default function App() {
   const [viewMode, setViewMode] = useState('landing');
   const [events, setEvents] = useState(MOCK_EVENTS);
 
-  const handleSaveEvent = (dateStr, updatedEvents) => {
-    setEvents(prev => {
+  type CalendarEvent = {
+    id: string;
+    name: string;
+    slot: string;
+  };
+  
+  const handleSaveEvent = (
+    dateStr: string,
+    updatedEvents: CalendarEvent[]
+  ) => {
+    setEvents((prev: Record<string, CalendarEvent[]>) => {
       const next = { ...prev };
       if (updatedEvents.length === 0) delete next[dateStr];
       else next[dateStr] = updatedEvents;
