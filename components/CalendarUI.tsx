@@ -38,21 +38,6 @@ export default function CalendarUI() {
     'landing'
   );
 
-  const handleSaveEvent = (
-    dateStr: string,
-    updatedEvents: CalendarEvent[]
-  ) => {
-    setEvents((prev) => {
-      const next = { ...prev };
-      if (updatedEvents.length === 0) {
-        delete next[dateStr];
-      } else {
-        next[dateStr] = updatedEvents;
-      }
-      return next;
-    });
-  };
-
   return (
     <div className="min-h-screen bg-[#FCF9F2] text-slate-800 font-sans">
       {viewMode === 'landing' && (
@@ -63,7 +48,6 @@ export default function CalendarUI() {
         <CalendarManager
           mode={viewMode}
           events={events}
-          onSave={handleSaveEvent}
           onExit={() => setViewMode('landing')}
         />
       )}
@@ -104,14 +88,14 @@ function LandingScreen({
         <div className="space-y-4">
           <button
             onClick={() => onSelectMode('customer')}
-            className="w-full p-4 bg-[#FDFBF4] text-[#800000] rounded-2xl hover:bg-[#F2E4B8] transition-all font-bold border-2 border-[#D4AF37]/30 shadow-sm"
+            className="w-full p-4 bg-[#FDFBF4] text-[#800000] rounded-2xl font-bold border-2 border-[#D4AF37]/30"
           >
             Check Availability
           </button>
 
           <button
             onClick={() => onSelectMode('admin')}
-            className="w-full p-4 bg-[#800000] text-white rounded-2xl hover:bg-black transition-all font-bold shadow-xl"
+            className="w-full p-4 bg-[#800000] text-white rounded-2xl font-bold"
           >
             Management Login
           </button>
@@ -126,15 +110,14 @@ function LandingScreen({
 function CalendarManager({
   mode,
   events,
-  onSave,
   onExit,
 }: {
   mode: 'admin' | 'customer';
   events: EventsMap;
-  onSave: (date: string, events: CalendarEvent[]) => void;
   onExit: () => void;
 }) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   const monthStart = startOfMonth(currentDate);
   const calendarDays = eachDayOfInterval({
@@ -184,9 +167,10 @@ function CalendarManager({
           return (
             <div
               key={dateStr}
+              onClick={() => isCurrentMonth && setSelectedDate(day)}
               className={`
-                min-h-[100px] p-2 bg-white text-xs
-                ${!isCurrentMonth ? 'opacity-30' : ''}
+                min-h-[100px] p-2 bg-white text-xs cursor-pointer
+                ${!isCurrentMonth ? 'opacity-30' : 'hover:bg-[#FDFBF4]'}
                 ${isToday(day) ? 'ring-2 ring-[#800000]/30' : ''}
               `}
             >
@@ -211,7 +195,6 @@ function CalendarManager({
         })}
       </div>
 
-      {/* Footer */}
       <div className="mt-6 text-center">
         <button
           onClick={onExit}
@@ -219,6 +202,70 @@ function CalendarManager({
         >
           Back
         </button>
+      </div>
+
+      {selectedDate && (
+        <DayModal
+          date={selectedDate}
+          events={events[format(selectedDate, 'yyyy-MM-dd')] || []}
+          onClose={() => setSelectedDate(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+/* ===================== Day Modal ===================== */
+
+function DayModal({
+  date,
+  events,
+  onClose,
+}: {
+  date: Date;
+  events: CalendarEvent[];
+  onClose: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 p-4">
+      <div className="bg-white rounded-t-3xl md:rounded-3xl w-full max-w-md shadow-2xl">
+        <div className="p-6 bg-[#800000] text-white flex justify-between">
+          <div>
+            <h3 className="text-xl font-bold">
+              {format(date, 'EEEE')}
+            </h3>
+            <p className="text-xs opacity-80">
+              {format(date, 'MMMM d, yyyy')}
+            </p>
+          </div>
+          <button onClick={onClose} className="text-xl font-bold">
+            ✕
+          </button>
+        </div>
+
+        <div className="p-6 space-y-4">
+          {events.length > 0 ? (
+            events.map((e) => (
+              <div
+                key={e.id}
+                className="p-4 rounded-xl bg-slate-50 font-bold"
+              >
+                {e.name} — {e.slot}
+              </div>
+            ))
+          ) : (
+            <div className="text-center text-emerald-600 font-bold">
+              Date is Available
+            </div>
+          )}
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 rounded-xl bg-slate-100 font-bold"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
