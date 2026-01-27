@@ -17,9 +17,9 @@ import { supabase } from '@/lib/supabase';
 
 /* ===================== CONFIG ===================== */
 
-const ADMIN_PIN = '2026';
+const ADMIN_PIN = '1234';
 const MAX_EVENTS_PER_DAY = 2;
-const TIME_SLOTS = ['Morning', 'Afternoon', 'Evening', 'All Day'] as const;
+const TIME_SLOTS = ['Morning', 'Evening', 'All Day'] as const;
 
 /* ===================== TYPES ===================== */
 
@@ -42,7 +42,6 @@ export default function CalendarUI() {
   const [viewMode, setViewMode] = useState<'landing' | 'admin' | 'customer'>(
     'landing'
   );
-  const [adminVerified, setAdminVerified] = useState(false);
   const [showPinPrompt, setShowPinPrompt] = useState(false);
 
   /* ---------- Load bookings ---------- */
@@ -113,10 +112,7 @@ export default function CalendarUI() {
           mode={viewMode}
           events={events}
           onSave={saveDayEvents}
-          onExit={() => {
-            setViewMode('landing');
-            setAdminVerified(false);
-          }}
+          onExit={() => setViewMode('landing')}
         />
       )}
 
@@ -124,7 +120,6 @@ export default function CalendarUI() {
         <AdminPinModal
           onClose={() => setShowPinPrompt(false)}
           onSuccess={() => {
-            setAdminVerified(true);
             setShowPinPrompt(false);
             setViewMode('admin');
           }}
@@ -171,7 +166,7 @@ function LandingScreen({
   );
 }
 
-/* ===================== ADMIN PIN MODAL ===================== */
+/* ===================== ADMIN PIN ===================== */
 
 function AdminPinModal({
   onClose,
@@ -182,11 +177,6 @@ function AdminPinModal({
 }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
-
-  const verify = () => {
-    if (pin === ADMIN_PIN) onSuccess();
-    else setError('Incorrect PIN');
-  };
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
@@ -204,24 +194,173 @@ function AdminPinModal({
           className="w-full p-3 border rounded-xl mb-2 text-center tracking-widest font-bold"
         />
 
-        {error && (
-          <p className="text-red-500 text-sm mb-2">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
 
         <div className="flex gap-3">
-          <button
-            onClick={onClose}
-            className="flex-1 p-3 bg-slate-100 rounded-xl font-bold"
-          >
+          <button onClick={onClose} className="flex-1 p-3 bg-slate-100 rounded-xl font-bold">
             Cancel
           </button>
           <button
-            onClick={verify}
+            onClick={() => {
+              if (pin === ADMIN_PIN) onSuccess();
+              else setError('Incorrect PIN');
+            }}
             className="flex-1 p-3 bg-[#800000] text-white rounded-xl font-bold"
           >
             Enter
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/* ===================== CALENDAR + MODAL ===================== */
+
+function CalendarManager({
+  mode,
+  events,
+  onSave,
+  onExit,
+}: {
+  mode: 'admin' | 'customer';
+  events: EventsMap;
+  onSave: (date: string, events: CalendarEvent[]) => void;
+  onExit: () => void;
+}) {
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+
+  const days = eachDayOfInterval({
+    start: startOfWeek(startOfMonth(currentDate)),
+    end: endOfWeek(endOfMonth(currentDate)),
+  });
+
+  return (
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-6 bg-white p-4 rounded-2xl shadow">
+        <button onClick={() => setCurrentDate(subMonths(currentDate, 1))}>←</button>
+        <h2 className="font-bold text-[#800000]">
+          {format(currentDate, 'MMMM yyyy')}
+        </h2>
+        <button onClick={() => setCurrentDate(addMonths(currentDate, 1))}>→</button>
+      </div>
+
+      <div className="grid grid-cols-7 gap-px bg-slate-200 rounded-2xl overflow-hidden">
+        {days.map((day) => {
+          const dateStr = format(day, 'yyyy-MM-dd');
+          const dayEvents = events[dateStr] || [];
+
+          return (
+            <div
+              key={dateStr}
+              onClick={() => setSelectedDate(day)}
+              className="min-h-[100px] p-2 bg-white cursor-pointer hover:bg-[#FDFBF4]"
+            >
+              <div className="font-bold text-xs mb-1">{format(day, 'd')}</div>
+              {dayEvents.map((e) => (
+                <div key={e.id} className="text-[10px] bg-[#800000] text-white rounded px-2 py-1 mb-1">
+                  {e.slot}
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+
+      <button onClick={onExit} className="mt-6 px-6 py-3 bg-slate-100 rounded-xl font-bold">
+        Back
+      </button>
+
+      {selectedDate && (
+        <DayModal
+          date={selectedDate}
+          mode={mode}
+          events={events[format(selectedDate, 'yyyy-MM-dd')] || []}
+          onSave={(updated) => onSave(format(selectedDate, 'yyyy-MM-dd'), updated)}
+          onClose={() => setSelectedDate(null)}
+        />
+      )}
+    </div>
+  );
+}
+
+function DayModal({
+  date,
+  mode,
+  events,
+  onSave,
+  onClose,
+}: {
+  date: Date;
+  mode: 'admin' | 'customer';
+  events: CalendarEvent[];
+  onSave: (events: CalendarEvent[]) => void;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState('');
+  const [slot, setSlot] = useState<Slot>('Morning');
+  const [error, setError] = useState('');
+
+  const hasAllDay = events.some((e) => e.slot === 'All Day');
+  const slotTaken = events.some((e) => e.slot === slot);
+
+  const addEvent = () => {
+    if (!name.trim()) return setError('Event name required');
+    if (hasAllDay) return setError('All Day blocks other bookings');
+    if (slot === 'All Day' && events.length > 0)
+      return setError('Clear existing bookings first');
+    if (slotTaken) return setError('Slot already booked');
+    if (events.length >= MAX_EVENTS_PER_DAY)
+      return setError('Maximum 2 bookings per day');
+
+    onSave([...events, { id: Date.now().toString(), name, slot }]);
+    setName('');
+    setSlot('Morning');
+    setError('');
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+      <div className="bg-white rounded-3xl w-full max-w-md p-6">
+        <h3 className="font-bold mb-2">{format(date, 'MMMM d, yyyy')}</h3>
+
+        {events.map((e) => (
+          <div key={e.id} className="flex justify-between bg-slate-50 p-3 rounded-xl mb-2">
+            <span className="font-bold">{e.name} — {e.slot}</span>
+            {mode === 'admin' && (
+              <button onClick={() => onSave(events.filter(ev => ev.id !== e.id))}>✕</button>
+            )}
+          </div>
+        ))}
+
+        {mode === 'admin' && (
+          <>
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Event name"
+              className="w-full p-3 border rounded-xl mb-2"
+            />
+            <select
+              value={slot}
+              onChange={(e) => setSlot(e.target.value as Slot)}
+              className="w-full p-3 border rounded-xl mb-2"
+            >
+              {TIME_SLOTS.map((s) => (
+                <option key={s}>{s}</option>
+              ))}
+            </select>
+            <button onClick={addEvent} className="w-full p-3 bg-[#800000] text-white rounded-xl">
+              Add Booking
+            </button>
+          </>
+        )}
+
+        <button onClick={onClose} className="w-full mt-3 p-3 bg-slate-100 rounded-xl">
+          Close
+        </button>
       </div>
     </div>
   );
