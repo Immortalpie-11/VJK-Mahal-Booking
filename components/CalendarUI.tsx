@@ -11,7 +11,6 @@ import {
   Trash2,
   XCircle,
   Clock,
-  LogOut,
   ChevronDown
 } from 'lucide-react';
 import {
@@ -25,11 +24,13 @@ import {
   eachDayOfInterval,
   isSameMonth,
   isToday,
+  isBefore,
+  startOfDay,
   getYear
 } from 'date-fns';
 import { supabase } from '../lib/supabase';
 
-const ADMIN_PIN = "1234";
+const ADMIN_PIN = "2025";
 const MAX_EVENTS = 2;
 const TIME_SLOTS = ["Morning", "Afternoon", "Evening", "All Day"];
 
@@ -236,15 +237,14 @@ function CalendarManager({ mode, events, onSave, onExit }: {
           >
             <Clock className="w-4 h-4 text-slate-600" />
           </button>
-          {mode === 'admin' && (
-            <button
-              onClick={onExit}
-              className="p-2.5 text-rose-500 hover:bg-rose-50 rounded-xl transition-all duration-200 shadow-sm hover:shadow"
-              aria-label="Exit"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          )}
+          <button
+            onClick={onExit}
+            className="p-2.5 border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+            aria-label="Back"
+          >
+            <ChevronLeft className="w-4 h-4 text-slate-600" />
+            <span className="text-sm font-semibold text-slate-700">Back</span>
+          </button>
         </div>
       </header>
 
@@ -267,6 +267,8 @@ function CalendarManager({ mode, events, onSave, onExit }: {
             const dayEvents = events[dateStr] || [];
             const status = getDayStatus(dayEvents);
             const isCurrentMonth = isSameMonth(day, currentDate);
+            const todayStart = startOfDay(new Date());
+            const isPastDate = isBefore(day, todayStart);
             const isFullyBooked = status === 'fully-booked';
             const isPartiallyBooked = status === 'partially-booked';
             const isAvailable = status === 'available';
@@ -287,21 +289,55 @@ function CalendarManager({ mode, events, onSave, onExit }: {
               );
             }
 
-            return (
-              <div
-                key={dateStr}
-                onClick={() => setSelectedDate(day)}
-                className={`
-                  min-h-[78px] sm:min-h-[88px] md:min-h-[96px] p-2 md:p-2.5 cursor-pointer 
+            if (isPastDate && (mode === 'customer' || dayEvents.length === 0)) {
+              const adminCanClick = mode === 'admin';
+              return (
+                <div
+                  key={dateStr}
+                  onClick={adminCanClick ? () => setSelectedDate(day) : undefined}
+                  className={`
+                  min-h-[78px] sm:min-h-[88px] md:min-h-[96px] p-2 md:p-2.5
                   transition-all duration-200 border-r border-b border-slate-200
                   ${isLastColumn ? 'border-r-0' : ''}
                   ${isLastRow ? 'border-b-0' : ''}
-                  ${isTodayDate ? 'bg-[#800000]/5' : 'bg-transparent'}
-                  ${isAvailable 
-                    ? 'hover:bg-emerald-50/30' 
-                    : isPartiallyBooked
-                    ? 'hover:bg-yellow-50/30'
-                    : 'hover:bg-rose-50/30'
+                  opacity-50 bg-slate-50/50
+                  ${adminCanClick ? 'cursor-pointer hover:bg-slate-100/50' : 'cursor-default'}
+                `}
+                >
+                  <div className="flex flex-col h-full">
+                    <div className="flex justify-between items-start mb-2">
+                      <span className="text-sm md:text-base font-medium text-slate-400">
+                        {format(day, 'd')}
+                      </span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-slate-300/50" />
+                    </div>
+                    <div className="mt-auto pt-1">
+                      <p className="text-[9px] md:text-[10px] text-slate-400 font-medium">Past</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+
+            const isCustomer = mode === 'customer';
+            return (
+              <div
+                key={dateStr}
+                onClick={isCustomer ? undefined : () => setSelectedDate(day)}
+                className={`
+                  min-h-[78px] sm:min-h-[88px] md:min-h-[96px] p-2 md:p-2.5
+                  transition-all duration-200 border-r border-b border-slate-200
+                  ${isLastColumn ? 'border-r-0' : ''}
+                  ${isLastRow ? 'border-b-0' : ''}
+                  ${isFullyBooked ? 'bg-red-50' : isPartiallyBooked ? 'bg-yellow-50' : isTodayDate ? 'bg-[#800000]/5' : 'bg-transparent'}
+                  ${isCustomer
+                    ? 'cursor-default'
+                    : `cursor-pointer ${isAvailable
+                        ? 'hover:bg-emerald-50/30'
+                        : isPartiallyBooked
+                        ? 'hover:bg-yellow-50/30'
+                        : 'hover:bg-rose-50/30'
+                      }`
                   }
                 `}
               >
