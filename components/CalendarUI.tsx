@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   format,
   startOfMonth,
@@ -13,6 +13,7 @@ import {
   addMonths,
   subMonths,
 } from 'date-fns';
+import { supabase } from '@/lib/supabase';
 
 /* ===================== Constants ===================== */
 
@@ -31,28 +32,79 @@ type CalendarEvent = {
 
 type EventsMap = Record<string, CalendarEvent[]>;
 
-/* ===================== Mock Data ===================== */
-
-const MOCK_EVENTS: EventsMap = {
-  '2026-01-26': [{ id: '1', name: 'Wedding', slot: 'Morning' }],
-};
-
 /* ===================== Main Component ===================== */
 
 export default function CalendarUI() {
-  const [events, setEvents] = useState<EventsMap>(MOCK_EVENTS);
+  const [events, setEvents] = useState<EventsMap>({});
+  const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'landing' | 'admin' | 'customer'>(
     'landing'
   );
 
-  const saveDayEvents = (dateStr: string, updated: CalendarEvent[]) => {
-    setEvents((prev) => {
-      const next = { ...prev };
-      if (updated.length === 0) delete next[dateStr];
-      else next[dateStr] = updated;
-      return next;
-    });
+  /* ---------- Load bookings from Supabase ---------- */
+  useEffect(() => {
+    const loadBookings = async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*');
+
+      if (error) {
+        console.error('Failed to load bookings', error);
+        setLoading(false);
+        return;
+      }
+
+      const map: EventsMap = {};
+      data.forEach((b) => {
+        const date = b.event_date;
+        if (!map[date]) map[date] = [];
+        map[date].push({
+          id: b.id,
+          name: b.name,
+          slot: b.slot,
+        });
+      });
+
+      setEvents(map);
+      setLoading(false);
+    };
+
+    loadBookings();
+  }, []);
+
+  /* ---------- Save bookings for a day ---------- */
+  const saveDayEvents = async (
+    dateStr: string,
+    updated: CalendarEvent[]
+  ) => {
+    // Delete existing bookings for that date
+    await supabase.from('bookings').delete().eq('event_date', dateStr);
+
+    // Insert updated bookings
+    if (updated.length > 0) {
+      await supabase.from('bookings').insert(
+        updated.map((e) => ({
+          event_date: dateStr,
+          name: e.name,
+          slot: e.slot,
+        }))
+      );
+    }
+
+    // Update local state
+    setEvents((prev) => ({
+      ...prev,
+      [dateStr]: updated,
+    }));
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading bookings…
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FCF9F2] text-slate-800 font-sans">
@@ -144,7 +196,7 @@ function CalendarManager({
         </button>
       </div>
 
-      {/* Grid */}
+      {/* Calendar Grid */}
       <div className="grid grid-cols-7 gap-px bg-slate-200 rounded-2xl overflow-hidden">
         {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
           <div
@@ -242,6 +294,7 @@ function DayModal({
       ...events,
       { id: Date.now().toString(), name, slot },
     ]);
+
     setName('');
     setSlot('Morning');
   };
