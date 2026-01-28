@@ -114,7 +114,7 @@ function LandingScreen({ onSelectMode }: { onSelectMode: (mode: ViewMode) => voi
             onClick={() => onSelectMode('admin')}
             className="w-full flex items-center justify-center min-h-[48px] sm:min-h-[52px] p-4 sm:p-5 bg-[#800000] text-white rounded-xl sm:rounded-2xl font-bold touch-manipulation active:scale-[0.98] transition-transform text-sm sm:text-base"
           >
-            <Lock className="w-5 h-5 mr-2 sm:mr-3 shrink-0" /> Management (PIN: {ADMIN_PIN})
+            <Lock className="w-5 h-5 mr-2 sm:mr-3 shrink-0" /> Management
           </button>
         </div>
       </div>
@@ -152,59 +152,64 @@ function CalendarManager({ mode, events, onSave, onExit }: {
   return (
     <div className="max-w-5xl mx-auto p-3 sm:p-4 md:p-6 w-full min-w-0 overflow-x-hidden">
       {/* Header */}
-      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-5 bg-white p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100">
-        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
-          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md overflow-hidden shrink-0">
-            <Image
-              src="/logo.svg"
-              alt="VJK Mahal Logo"
-              width={48}
-              height={48}
-              className="w-full h-full object-contain"
-            />
+      <header className="flex flex-col gap-3 mb-4 md:mb-5 bg-white p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100">
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md overflow-hidden shrink-0">
+              <Image
+                src="/logo.svg"
+                alt="VJK Mahal Logo"
+                width={48}
+                height={48}
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <div>
+              <h2 className="text-xl md:text-2xl font-serif font-bold text-[#800000] tracking-tight">VJK Mahal</h2>
+              <p className="text-[11px] md:text-xs font-medium text-slate-500 uppercase tracking-wider mt-0.5">
+                Availability View
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl md:text-2xl font-serif font-bold text-[#800000] tracking-tight">VJK Mahal</h2>
-            <p className="text-[11px] md:text-xs font-medium text-slate-500 uppercase tracking-wider mt-0.5">
-              Availability View
-            </p>
+
+          <div className="flex gap-2 shrink-0">
+            <button
+              onClick={goToToday}
+              className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow touch-manipulation"
+              aria-label="Go to today"
+            >
+              <Clock className="w-4 h-4 text-slate-600" />
+            </button>
+            <button
+              onClick={onExit}
+              className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow touch-manipulation"
+              aria-label="Back"
+            >
+              <ChevronLeft className="w-4 h-4 text-slate-600" />
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full sm:w-auto">
-          <div className="flex items-center gap-0.5 sm:gap-1 bg-gradient-to-r from-slate-50 to-slate-100 px-2 sm:px-3 py-2 sm:py-2.5 rounded-full shadow-sm border border-slate-200/50">
+        <div className="flex items-center justify-center w-full mt-3 sm:mt-4">
+          <div className="flex items-center justify-between bg-gradient-to-r from-slate-50 to-slate-100 px-2 sm:px-3 py-2 sm:py-2.5 rounded-full shadow-sm border border-slate-200/50 flex-1 max-w-sm">
             <button
               onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-              className="p-2 sm:p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
+              className="p-2 sm:p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
               aria-label="Previous month"
             >
               <ChevronLeft className="w-4 h-4 text-slate-700" />
             </button>
-            <span className="font-semibold text-slate-800 px-1 sm:px-3 min-w-[90px] sm:min-w-[110px] text-center text-xs sm:text-sm">
+            <span className="font-semibold text-slate-800 px-1 sm:px-3 text-center text-xs sm:text-sm flex-1">
               {format(currentDate, 'MMM yyyy')}
             </span>
             <button
               onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-              className="p-2 sm:p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
+              className="p-2 sm:p-1.5 min-h-[44px] min-w-[44px] flex items-center justify-center hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
               aria-label="Next month"
             >
               <ChevronRight className="w-4 h-4 text-slate-700" />
             </button>
           </div>
-          <button
-            onClick={goToToday}
-            className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow touch-manipulation"
-            aria-label="Go to today"
-          >
-            <Clock className="w-4 h-4 text-slate-600" />
-          </button>
-          <button
-            onClick={onExit}
-            className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow touch-manipulation"
-            aria-label="Back"
-          >
-            <ChevronLeft className="w-4 h-4 text-slate-600" />
-          </button>
         </div>
       </header>
 
@@ -412,19 +417,25 @@ function DayModal({ date, events, mode, onClose, onSave }: {
     onClose();
   };
 
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
+
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-2 sm:p-4 pb-[env(safe-area-inset-bottom)] transition-opacity duration-200"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex flex-col bg-white w-full h-full min-h-[100dvh] h-[100dvh] overflow-hidden"
+      style={{ height: '100dvh' }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="day-modal-title"
     >
-      <div 
-        className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-t-3xl md:rounded-3xl shadow-2xl border border-slate-200 transform transition-all duration-300 ease-out max-h-[85dvh] md:max-h-[90vh] overflow-y-auto overscroll-contain"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="p-4 sm:p-6 md:p-8">
-          <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col h-full w-full max-w-2xl mx-auto overflow-hidden">
+        <div className="flex flex-col h-full min-h-0 p-4 sm:p-6 md:p-8">
+          <header className="flex items-center justify-between mb-4 sm:mb-6 shrink-0">
             <div>
-              <h3 className="text-2xl md:text-3xl font-serif font-bold text-[#800000] tracking-tight">
+              <h3 id="day-modal-title" className="text-2xl md:text-3xl font-serif font-bold text-[#800000] tracking-tight">
                 {format(date, 'MMMM do, yyyy')}
               </h3>
               <p className="text-sm text-slate-500 mt-1">
@@ -438,9 +449,10 @@ function DayModal({ date, events, mode, onClose, onSave }: {
             >
               <XCircle className="w-5 h-5 text-slate-400" />
             </button>
-          </div>
+          </header>
 
-          <div className="space-y-3 mb-6">
+          <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain -mx-4 px-4 sm:-mx-6 sm:px-6 md:-mx-8 md:px-8">
+          <div className="space-y-3 mb-4">
             {localEvents.length === 0 ? (
               <div className="text-center py-8 text-slate-400">
                 <p className="text-sm">No bookings for this date</p>
@@ -473,7 +485,7 @@ function DayModal({ date, events, mode, onClose, onSave }: {
           </div>
 
           {mode === 'admin' && localEvents.length < MAX_EVENTS && (
-            <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200 mb-6">
+            <div className="space-y-4 p-4 bg-slate-50 rounded-xl border border-slate-200 mb-4">
               <h4 className="text-sm font-semibold text-slate-700 mb-3">Add New Booking</h4>
               <input
                 value={form.name}
@@ -500,8 +512,9 @@ function DayModal({ date, events, mode, onClose, onSave }: {
               </div>
             </div>
           )}
+          </div>
 
-          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-slate-200">
+          <footer className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-slate-200 shrink-0 mt-auto">
             <button
               onClick={onClose}
               className="flex-1 min-h-[48px] p-3 sm:p-3.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-xl transition-all duration-200 touch-manipulation"
@@ -516,7 +529,7 @@ function DayModal({ date, events, mode, onClose, onSave }: {
                 Save Changes
               </button>
             )}
-          </div>
+          </footer>
         </div>
       </div>
     </div>
