@@ -54,13 +54,29 @@ export default function App() {
   const [viewMode, setViewMode] = useState<ViewMode>('landing');
   const [events, setEvents] = useState<EventsMap>(MOCK_EVENTS);
 
-  const handleSaveEvent = (dateStr: string, updatedEvents: CalendarEvent[]) => {
-    setEvents(prev => {
-      const next = { ...prev };
-      if (updatedEvents.length === 0) delete next[dateStr];
-      else next[dateStr] = updatedEvents;
-      return next;
-    });
+  const saveDayEvents = async (dateStr: string, updatedEvents: CalendarEvent[]) => {
+    console.log('SAVE CALLED', dateStr, updatedEvents);
+
+    const del = await supabase
+      .from('bookings')
+      .delete()
+      .eq('event_date', dateStr);
+
+    console.log('DELETE RESULT', del);
+
+    if (updatedEvents.length > 0) {
+      const ins = await supabase.from('bookings').insert(
+        updatedEvents.map((e) => ({
+          event_date: dateStr,
+          name: e.name,
+          slot: e.slot,
+        }))
+      );
+
+      console.log('INSERT RESULT', ins);
+    }
+
+    setEvents((prev) => ({ ...prev, [dateStr]: updatedEvents }));
   };
 
   return (
@@ -73,7 +89,7 @@ export default function App() {
         <CalendarManager
           mode={viewMode}
           events={events}
-          onSave={handleSaveEvent}
+          onSave={saveDayEvents}
           onExit={() => setViewMode('landing')}
         />
       )}
@@ -452,8 +468,8 @@ function DayModal({ date, events, mode, onClose, onSave }: {
     setLocalEvents(localEvents.filter(e => e.id !== id));
   };
 
-  const save = () => {
-    onSave(format(date, 'yyyy-MM-dd'), localEvents);
+  const save = async () => {
+    await onSave(format(date, 'yyyy-MM-dd'), localEvents);
     onClose();
   };
 
