@@ -210,13 +210,13 @@ function CalendarManager({ mode, events, onSave, onExit }: {
       </header>
 
       {/* Calendar Grid */}
-      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-2 sm:p-4 md:p-5 mb-4 md:mb-5 overflow-x-auto">
-        <div className="grid grid-cols-7 border border-slate-200 rounded-lg overflow-hidden min-w-[280px]">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-2 sm:p-4 md:p-5 mb-4 md:mb-5 overflow-x-auto -mx-1 px-1 sm:mx-0 sm:px-0">
+        <div className="grid grid-cols-7 border border-slate-200 rounded-lg overflow-hidden min-w-[300px] sm:min-w-0">
           {/* Day Headers */}
           {['S','M','T','W','T','F','S'].map((d, index) => (
             <div
               key={`day-header-${index}`}
-              className={`p-2 text-center text-[11px] md:text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50 border-r border-b border-slate-200 last:border-r-0`}
+              className={`p-1 sm:p-2 text-center text-[10px] sm:text-[11px] md:text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-50 border-r border-b border-slate-200 last:border-r-0 min-w-0`}
             >
               {d}
             </div>
@@ -241,9 +241,9 @@ function CalendarManager({ mode, events, onSave, onExit }: {
               return (
                 <div
                   key={dateStr}
-                  className={`min-h-[78px] sm:min-h-[88px] md:min-h-[96px] p-2 opacity-25 border-r border-b border-slate-200 ${isLastColumn ? 'border-r-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}
+                  className={`min-h-[72px] sm:min-h-[88px] md:min-h-[96px] p-1.5 sm:p-2 min-w-0 opacity-25 border-r border-b border-slate-200 ${isLastColumn ? 'border-r-0' : ''} ${isLastRow ? 'border-b-0' : ''}`}
                 >
-                  <span className="text-sm font-medium text-slate-300">
+                  <span className="text-xs sm:text-sm font-medium text-slate-300">
                     {format(day, 'd')}
                   </span>
                 </div>
@@ -257,7 +257,7 @@ function CalendarManager({ mode, events, onSave, onExit }: {
                   key={dateStr}
                   onClick={adminCanClick ? () => setSelectedDate(day) : undefined}
                   className={`
-                  min-h-[78px] sm:min-h-[88px] md:min-h-[96px] p-2 md:p-2.5
+                  min-h-[72px] sm:min-h-[88px] md:min-h-[96px] p-1.5 sm:p-2 md:p-2.5 min-w-0
                   transition-all duration-200 border-r border-b border-slate-200
                   ${isLastColumn ? 'border-r-0' : ''}
                   ${isLastRow ? 'border-b-0' : ''}
@@ -272,8 +272,8 @@ function CalendarManager({ mode, events, onSave, onExit }: {
                       </span>
                       <div className="w-2.5 h-2.5 rounded-full bg-slate-300/50" />
                     </div>
-                    <div className="mt-auto pt-1">
-                      <p className="text-[9px] md:text-[10px] text-slate-400 font-medium">Past</p>
+                    <div className="mt-auto pt-0.5 sm:pt-1 min-w-0 overflow-hidden">
+                      <p className="text-[8px] sm:text-[9px] md:text-[10px] text-slate-400 font-medium truncate">Past</p>
                     </div>
                   </div>
                 </div>
@@ -286,7 +286,7 @@ function CalendarManager({ mode, events, onSave, onExit }: {
                 key={dateStr}
                 onClick={isCustomer ? undefined : () => setSelectedDate(day)}
                 className={`
-                  min-h-[78px] sm:min-h-[88px] md:min-h-[96px] p-2 md:p-2.5
+                  min-h-[72px] sm:min-h-[88px] md:min-h-[96px] p-1.5 sm:p-2 md:p-2.5 min-w-0
                   transition-all duration-200 border-r border-b border-slate-200
                   ${isLastColumn ? 'border-r-0' : ''}
                   ${isLastRow ? 'border-b-0' : ''}
@@ -302,10 +302,10 @@ function CalendarManager({ mode, events, onSave, onExit }: {
                   }
                 `}
               >
-                <div className="flex flex-col h-full">
-                  <div className="flex justify-between items-start mb-2">
+                <div className="flex flex-col h-full min-w-0">
+                  <div className="flex justify-between items-start gap-0.5 mb-1 sm:mb-2">
                     <span className={`
-                      text-sm md:text-base font-bold
+                      text-xs sm:text-sm md:text-base font-bold truncate min-w-0
                       ${isFullyBooked ? 'text-[#800000]' : 
                         isTodayDate ? 'text-[#800000]' : 
                         'text-slate-800'
@@ -314,27 +314,33 @@ function CalendarManager({ mode, events, onSave, onExit }: {
                       {format(day, 'd')}
                     </span>
                     <div className={`
-                      w-2.5 h-2.5 rounded-full shadow-sm
+                      w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shadow-sm shrink-0
                       ${isAvailable ? 'bg-emerald-500 ring-2 ring-emerald-200' : 
                         isPartiallyBooked ? 'bg-yellow-400 ring-2 ring-yellow-200' : 
                         'bg-[#800000] ring-2 ring-[#800000]/20'
                       }
                     `} />
                   </div>
-                  <div className="mt-auto pt-1">
+                  <div className="mt-auto pt-0.5 sm:pt-1 min-w-0 overflow-hidden">
                     {isAvailable && (
-                      <p className="text-[9px] md:text-[10px] text-emerald-600 font-semibold tracking-wide">
-                        AVAILABLE
+                      <p className="text-[8px] sm:text-[9px] md:text-[10px] text-emerald-600 font-semibold tracking-wide truncate" title="Available">
+                        <span className="sm:hidden">FREE</span>
+                        <span className="hidden sm:inline">AVAILABLE</span>
                       </p>
                     )}
                     {isPartiallyBooked && dayEvents.length > 0 && (
-                      <div className="bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-800 text-[9px] font-bold px-2 py-0.5 rounded-md inline-block border border-yellow-200/50 shadow-sm">
-                        {dayEvents[0].slot}
+                      <div className="bg-gradient-to-r from-yellow-100 to-yellow-50 text-yellow-800 text-[8px] sm:text-[9px] font-bold px-1 sm:px-2 py-0.5 rounded truncate max-w-full border border-yellow-200/50 shadow-sm inline-block" title={dayEvents[0].slot}>
+                        {dayEvents[0].slot === 'Morning' && (<><span className="sm:hidden">Morn</span><span className="hidden sm:inline">Morning</span></>)}
+                        {dayEvents[0].slot === 'Afternoon' && (<><span className="sm:hidden">Aft</span><span className="hidden sm:inline">Afternoon</span></>)}
+                        {dayEvents[0].slot === 'Evening' && (<><span className="sm:hidden">Eve</span><span className="hidden sm:inline">Evening</span></>)}
+                        {dayEvents[0].slot === 'All Day' && (<><span className="sm:hidden">Day</span><span className="hidden sm:inline">All Day</span></>)}
+                        {!['Morning','Afternoon','Evening','All Day'].includes(dayEvents[0].slot) && dayEvents[0].slot}
                       </div>
                     )}
                     {isFullyBooked && (
-                      <p className="text-[9px] md:text-[10px] text-[#800000] font-bold tracking-wide">
-                        FULLY BOOKED
+                      <p className="text-[8px] sm:text-[9px] md:text-[10px] text-[#800000] font-bold tracking-wide truncate" title="Fully booked">
+                        <span className="sm:hidden">FULL</span>
+                        <span className="hidden sm:inline">FULLY BOOKED</span>
                       </p>
                     )}
                   </div>
