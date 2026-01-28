@@ -79,6 +79,37 @@ export default function App() {
     setEvents((prev) => ({ ...prev, [dateStr]: updatedEvents }));
   };
 
+  useEffect(() => {
+    const loadBookings = async () => {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*');
+
+      if (error) {
+        console.error('Failed to load bookings', error);
+        return;
+      }
+
+      // Convert flat rows → calendar map
+      const grouped: EventsMap = {};
+
+      data.forEach((row) => {
+        const dateKey = row.event_date;
+        if (!grouped[dateKey]) grouped[dateKey] = [];
+
+        grouped[dateKey].push({
+          id: String(row.id),
+          name: row.name,
+          slot: row.slot,
+        });
+      });
+
+      setEvents(grouped);
+    };
+
+    loadBookings();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#FCF9F2] text-slate-800 font-sans">
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
@@ -200,6 +231,7 @@ function CalendarManager({ mode, events, onSave, onExit }: {
   };
 
   const getDayStatus = (dayEvents: CalendarEvent[]) => {
+    if (dayEvents.some(event => event.slot === 'All Day')) return 'fully-booked';
     if (dayEvents.length === 0) return 'available';
     if (dayEvents.length >= MAX_EVENTS) return 'fully-booked';
     return 'partially-booked';
