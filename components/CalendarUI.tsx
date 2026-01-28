@@ -200,11 +200,10 @@ function CalendarManager({ mode, events, onSave, onExit }: {
           </button>
           <button
             onClick={onExit}
-            className="p-2.5 min-h-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow gap-2 touch-manipulation"
+            className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow touch-manipulation"
             aria-label="Back"
           >
-            <ChevronLeft className="w-4 h-4 text-slate-600 shrink-0" />
-            <span className="text-xs sm:text-sm font-semibold text-slate-700">Back</span>
+            <ChevronLeft className="w-4 h-4 text-slate-600" />
           </button>
         </div>
       </header>
@@ -324,8 +323,7 @@ function CalendarManager({ mode, events, onSave, onExit }: {
                   <div className="mt-auto pt-0.5 sm:pt-1 min-w-0 overflow-hidden">
                     {isAvailable && (
                       <p className="text-[8px] sm:text-[9px] md:text-[10px] text-emerald-600 font-semibold tracking-wide truncate" title="Available">
-                        <span className="sm:hidden">FREE</span>
-                        <span className="hidden sm:inline">AVAILABLE</span>
+                        AVAILABLE
                       </p>
                     )}
                     {isPartiallyBooked && dayEvents.length > 0 && (
@@ -352,19 +350,19 @@ function CalendarManager({ mode, events, onSave, onExit }: {
       </div>
 
       {/* Legend */}
-      <div className="bg-white p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100">
-        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 md:gap-6 text-xs md:text-sm">
-          <div className="flex items-center gap-3 group cursor-default">
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-emerald-50 shadow-sm group-hover:scale-110 transition-transform duration-200"></div>
-            <span className="text-slate-700 font-semibold">AVAILABLE</span>
+      <div className="bg-white p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100">
+        <div className="flex flex-row flex-nowrap items-center justify-center sm:justify-start gap-2 sm:gap-4 md:gap-6 overflow-x-auto">
+          <div className="flex items-center gap-1.5 sm:gap-3 cursor-default shrink-0">
+            <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 border-emerald-400 bg-emerald-50 shadow-sm shrink-0"></div>
+            <span className="text-[10px] sm:text-xs md:text-sm text-slate-700 font-semibold uppercase tracking-wide whitespace-nowrap">Available</span>
           </div>
-          <div className="flex items-center gap-3 group cursor-default">
-            <div className="w-3.5 h-3.5 rounded-full border-2 border-yellow-400 bg-yellow-50 shadow-sm group-hover:scale-110 transition-transform duration-200"></div>
-            <span className="text-slate-700 font-semibold">PARTIALLY BOOKED</span>
+          <div className="flex items-center gap-1.5 sm:gap-3 cursor-default shrink-0">
+            <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full border-2 border-yellow-400 bg-yellow-50 shadow-sm shrink-0"></div>
+            <span className="text-[10px] sm:text-xs md:text-sm text-slate-700 font-semibold uppercase tracking-wide whitespace-nowrap"><span className="sm:hidden">Partial</span><span className="hidden sm:inline">Partially booked</span></span>
           </div>
-          <div className="flex items-center gap-3 group cursor-default">
-            <div className="w-3.5 h-3.5 rounded-full bg-[#800000] shadow-md ring-2 ring-[#800000]/20 group-hover:scale-110 transition-transform duration-200"></div>
-            <span className="text-slate-700 font-semibold">FULLY BOOKED</span>
+          <div className="flex items-center gap-1.5 sm:gap-3 cursor-default shrink-0">
+            <div className="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-[#800000] shadow-md ring-2 ring-[#800000]/20 shrink-0"></div>
+            <span className="text-[10px] sm:text-xs md:text-sm text-slate-700 font-semibold uppercase tracking-wide whitespace-nowrap"><span className="sm:hidden">Full</span><span className="hidden sm:inline">Fully booked</span></span>
           </div>
         </div>
       </div>
