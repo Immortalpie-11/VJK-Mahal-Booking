@@ -23,19 +23,19 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Management Dashboard</h1>
+    <div className="min-h-screen min-h-[100dvh] bg-gray-100 p-4 sm:p-6 md:p-8 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto w-full min-w-0">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold truncate">Management Dashboard</h1>
           <button
             onClick={handleLogout}
-            className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+            className="w-full sm:w-auto min-h-[44px] px-4 py-2.5 sm:py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors touch-manipulation shrink-0"
           >
             Logout
           </button>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <p>Your admin content goes here</p>
+        <div className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-lg shadow-md">
+          <p className="text-slate-600">Your admin content goes here</p>
         </div>
       </div>
     </div>

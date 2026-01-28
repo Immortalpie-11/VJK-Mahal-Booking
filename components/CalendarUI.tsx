@@ -85,10 +85,10 @@ export default function App() {
 
 function LandingScreen({ onSelectMode }: { onSelectMode: (mode: ViewMode) => void }) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#800000] relative overflow-hidden">
-      <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl max-w-md w-full text-center border-b-8 border-[#D4AF37]">
-        <div className="mb-8 flex justify-center">
-          <div className="w-28 h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-4 border-[#D4AF37] p-2">
+    <div className="flex flex-col items-center justify-center min-h-screen min-h-[100dvh] p-4 sm:p-6 bg-[#800000] relative overflow-x-hidden">
+      <div className="bg-white p-6 sm:p-8 md:p-12 rounded-2xl sm:rounded-[3rem] shadow-2xl max-w-md w-full text-center border-b-4 sm:border-b-8 border-[#D4AF37]">
+        <div className="mb-6 sm:mb-8 flex justify-center">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-2 sm:border-4 border-[#D4AF37] p-1.5 sm:p-2">
             <Image
               src="/logo.svg"
               alt="VJK Mahal Logo"
@@ -99,22 +99,22 @@ function LandingScreen({ onSelectMode }: { onSelectMode: (mode: ViewMode) => voi
           </div>
         </div>
 
-        <h1 className="text-4xl font-serif font-bold text-[#800000]">VJK Mahal</h1>
-        <p className="text-sm text-slate-500 italic mb-10">Event Booking System</p>
+        <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#800000]">VJK Mahal</h1>
+        <p className="text-xs sm:text-sm text-slate-500 italic mb-6 sm:mb-10">Event Booking System</p>
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           <button
             onClick={() => onSelectMode('customer')}
-            className="w-full flex items-center justify-center p-5 bg-[#FDFBF4] text-[#800000] rounded-2xl font-bold border-2 border-[#D4AF37]/30"
+            className="w-full flex items-center justify-center min-h-[48px] sm:min-h-[52px] p-4 sm:p-5 bg-[#FDFBF4] text-[#800000] rounded-xl sm:rounded-2xl font-bold border-2 border-[#D4AF37]/30 touch-manipulation active:scale-[0.98] transition-transform"
           >
-            <User className="w-5 h-5 mr-3" /> Check Availability
+            <User className="w-5 h-5 mr-2 sm:mr-3 shrink-0" /> <span className="text-sm sm:text-base">Check Availability</span>
           </button>
 
           <button
             onClick={() => onSelectMode('admin')}
-            className="w-full flex items-center justify-center p-5 bg-[#800000] text-white rounded-2xl font-bold"
+            className="w-full flex items-center justify-center min-h-[48px] sm:min-h-[52px] p-4 sm:p-5 bg-[#800000] text-white rounded-xl sm:rounded-2xl font-bold touch-manipulation active:scale-[0.98] transition-transform text-sm sm:text-base"
           >
-            <Lock className="w-5 h-5 mr-3" /> Management (PIN: {ADMIN_PIN})
+            <Lock className="w-5 h-5 mr-2 sm:mr-3 shrink-0" /> Management (PIN: {ADMIN_PIN})
           </button>
         </div>
       </div>
@@ -150,11 +150,11 @@ function CalendarManager({ mode, events, onSave, onExit }: {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-3 sm:p-4 md:p-6">
+    <div className="max-w-5xl mx-auto p-3 sm:p-4 md:p-6 w-full min-w-0 overflow-x-hidden">
       {/* Header */}
-      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-5 bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-slate-100">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl flex items-center justify-center shadow-md overflow-hidden">
+      <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 md:mb-5 bg-white p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl flex items-center justify-center shadow-md overflow-hidden shrink-0">
             <Image
               src="/logo.svg"
               alt="VJK Mahal Logo"
@@ -171,21 +171,21 @@ function CalendarManager({ mode, events, onSave, onExit }: {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 flex-wrap">
-          <div className="flex items-center gap-1 bg-gradient-to-r from-slate-50 to-slate-100 px-3 py-2.5 rounded-full shadow-sm border border-slate-200/50">
+        <div className="flex items-center gap-2 sm:gap-3 flex-wrap w-full sm:w-auto">
+          <div className="flex items-center gap-0.5 sm:gap-1 bg-gradient-to-r from-slate-50 to-slate-100 px-2 sm:px-3 py-2 sm:py-2.5 rounded-full shadow-sm border border-slate-200/50">
             <button
               onClick={() => setCurrentDate(subMonths(currentDate, 1))}
-              className="p-1.5 hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95"
+              className="p-2 sm:p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
               aria-label="Previous month"
             >
               <ChevronLeft className="w-4 h-4 text-slate-700" />
             </button>
-            <span className="font-semibold text-slate-800 px-3 min-w-[110px] text-center text-sm">
+            <span className="font-semibold text-slate-800 px-1 sm:px-3 min-w-[90px] sm:min-w-[110px] text-center text-xs sm:text-sm">
               {format(currentDate, 'MMM yyyy')}
             </span>
             <button
               onClick={() => setCurrentDate(addMonths(currentDate, 1))}
-              className="p-1.5 hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95"
+              className="p-2 sm:p-1.5 min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center hover:bg-white rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 touch-manipulation"
               aria-label="Next month"
             >
               <ChevronRight className="w-4 h-4 text-slate-700" />
@@ -193,25 +193,25 @@ function CalendarManager({ mode, events, onSave, onExit }: {
           </div>
           <button
             onClick={goToToday}
-            className="p-2.5 border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow"
+            className="p-2.5 min-h-[44px] min-w-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow touch-manipulation"
             aria-label="Go to today"
           >
             <Clock className="w-4 h-4 text-slate-600" />
           </button>
           <button
             onClick={onExit}
-            className="p-2.5 border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+            className="p-2.5 min-h-[44px] flex items-center justify-center border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200 shadow-sm hover:shadow gap-2 touch-manipulation"
             aria-label="Back"
           >
-            <ChevronLeft className="w-4 h-4 text-slate-600" />
-            <span className="text-sm font-semibold text-slate-700">Back</span>
+            <ChevronLeft className="w-4 h-4 text-slate-600 shrink-0" />
+            <span className="text-xs sm:text-sm font-semibold text-slate-700">Back</span>
           </button>
         </div>
       </header>
 
       {/* Calendar Grid */}
-      <div className="bg-white rounded-2xl shadow-lg border border-slate-100 p-3 sm:p-4 md:p-5 mb-4 md:mb-5">
-        <div className="grid grid-cols-7 border border-slate-200 rounded-lg overflow-hidden">
+      <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 p-2 sm:p-4 md:p-5 mb-4 md:mb-5 overflow-x-auto">
+        <div className="grid grid-cols-7 border border-slate-200 rounded-lg overflow-hidden min-w-[280px]">
           {/* Day Headers */}
           {['S','M','T','W','T','F','S'].map((d, index) => (
             <div
@@ -346,8 +346,8 @@ function CalendarManager({ mode, events, onSave, onExit }: {
       </div>
 
       {/* Legend */}
-      <div className="bg-white p-4 md:p-5 rounded-2xl shadow-lg border border-slate-100">
-        <div className="flex flex-wrap items-center gap-4 md:gap-6 text-xs md:text-sm">
+      <div className="bg-white p-4 md:p-5 rounded-xl sm:rounded-2xl shadow-lg border border-slate-100">
+        <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4 md:gap-6 text-xs md:text-sm">
           <div className="flex items-center gap-3 group cursor-default">
             <div className="w-3.5 h-3.5 rounded-full border-2 border-emerald-400 bg-emerald-50 shadow-sm group-hover:scale-110 transition-transform duration-200"></div>
             <span className="text-slate-700 font-semibold">AVAILABLE</span>
@@ -410,14 +410,14 @@ function DayModal({ date, events, mode, onClose, onSave }: {
 
   return (
     <div 
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-4 transition-opacity duration-200"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end md:items-center justify-center z-50 p-2 sm:p-4 pb-[env(safe-area-inset-bottom)] transition-opacity duration-200"
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-md rounded-t-3xl md:rounded-3xl shadow-2xl border border-slate-200 transform transition-all duration-300 ease-out max-h-[90vh] overflow-y-auto"
+        className="bg-white w-full max-w-md rounded-t-2xl sm:rounded-t-3xl md:rounded-3xl shadow-2xl border border-slate-200 transform transition-all duration-300 ease-out max-h-[85dvh] md:max-h-[90vh] overflow-y-auto overscroll-contain"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="p-6 md:p-8">
+        <div className="p-4 sm:p-6 md:p-8">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h3 className="text-2xl md:text-3xl font-serif font-bold text-[#800000] tracking-tight">
@@ -475,21 +475,21 @@ function DayModal({ date, events, mode, onClose, onSave }: {
                 value={form.name}
                 onChange={e => setForm({ ...form, name: e.target.value })}
                 placeholder="Enter booking name"
-                className="w-full p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#800000]/20 focus:border-[#800000] transition-all duration-200"
+                className="w-full min-h-[48px] p-3 sm:p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#800000]/20 focus:border-[#800000] transition-all duration-200 touch-manipulation"
                 onKeyDown={(e) => e.key === 'Enter' && add()}
               />
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <select
                   value={form.slot}
                   onChange={e => setForm({ ...form, slot: e.target.value })}
-                  className="flex-1 p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#800000]/20 focus:border-[#800000] transition-all duration-200"
+                  className="flex-1 min-h-[48px] p-3 sm:p-3.5 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#800000]/20 focus:border-[#800000] transition-all duration-200 touch-manipulation"
                 >
                   {TIME_SLOTS.map(s => <option key={s}>{s}</option>)}
                 </select>
                 <button
                   onClick={add}
                   disabled={!form.name}
-                  className="bg-gradient-to-r from-[#800000] to-[#9a1a1a] text-white px-6 py-3.5 rounded-xl font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95"
+                  className="min-h-[48px] bg-gradient-to-r from-[#800000] to-[#9a1a1a] text-white px-6 py-3 sm:py-3.5 rounded-xl font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation"
                 >
                   Add
                 </button>
@@ -497,17 +497,17 @@ function DayModal({ date, events, mode, onClose, onSave }: {
             </div>
           )}
 
-          <div className="flex gap-3 pt-4 border-t border-slate-200">
+          <div className="flex flex-col-reverse sm:flex-row gap-3 pt-4 border-t border-slate-200">
             <button
               onClick={onClose}
-              className="flex-1 p-3.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-xl transition-all duration-200"
+              className="flex-1 min-h-[48px] p-3 sm:p-3.5 text-slate-600 font-semibold hover:bg-slate-100 rounded-xl transition-all duration-200 touch-manipulation"
             >
               Close
             </button>
             {mode === 'admin' && (
               <button
                 onClick={save}
-                className="flex-1 p-3.5 bg-gradient-to-r from-[#D4AF37] to-[#e5c04a] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95"
+                className="flex-1 min-h-[48px] p-3 sm:p-3.5 bg-gradient-to-r from-[#D4AF37] to-[#e5c04a] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 touch-manipulation"
               >
                 Save Changes
               </button>
