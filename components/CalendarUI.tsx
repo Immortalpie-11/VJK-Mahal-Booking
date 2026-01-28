@@ -84,19 +84,6 @@ export default function App() {
 /* ===================== Landing Screen ===================== */
 
 function LandingScreen({ onSelectMode }: { onSelectMode: (mode: ViewMode) => void }) {
-  const [showPinInput, setShowPinInput] = useState(false);
-  const [pin, setPin] = useState('');
-  const [error, setError] = useState('');
-
-  const handleAdminLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (pin === ADMIN_PIN) onSelectMode('admin');
-    else {
-      setError('Incorrect PIN');
-      setPin('');
-    }
-  };
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#800000] relative overflow-hidden">
       <div className="bg-white p-8 md:p-12 rounded-[3rem] shadow-2xl max-w-md w-full text-center border-b-8 border-[#D4AF37]">
@@ -115,47 +102,21 @@ function LandingScreen({ onSelectMode }: { onSelectMode: (mode: ViewMode) => voi
         <h1 className="text-4xl font-serif font-bold text-[#800000]">VJK Mahal</h1>
         <p className="text-sm text-slate-500 italic mb-10">Event Booking System</p>
 
-        {!showPinInput ? (
-          <div className="space-y-4">
-            <button
-              onClick={() => onSelectMode('customer')}
-              className="w-full flex items-center justify-center p-5 bg-[#FDFBF4] text-[#800000] rounded-2xl font-bold border-2 border-[#D4AF37]/30"
-            >
-              <User className="w-5 h-5 mr-3" /> Check Availability
-            </button>
+        <div className="space-y-4">
+          <button
+            onClick={() => onSelectMode('customer')}
+            className="w-full flex items-center justify-center p-5 bg-[#FDFBF4] text-[#800000] rounded-2xl font-bold border-2 border-[#D4AF37]/30"
+          >
+            <User className="w-5 h-5 mr-3" /> Check Availability
+          </button>
 
-            <button
-              onClick={() => setShowPinInput(true)}
-              className="w-full flex items-center justify-center p-5 bg-[#800000] text-white rounded-2xl font-bold"
-            >
-              <Lock className="w-5 h-5 mr-3" /> Management Login
-            </button>
-          </div>
-        ) : (
-          <form onSubmit={handleAdminLogin} className="space-y-4">
-            <input
-              type="password"
-              value={pin}
-              inputMode="numeric"
-              onChange={(e) => {
-                setPin(e.target.value);
-                setError('');
-              }}
-              className="w-full p-4 border bg-slate-50 rounded-2xl text-center text-2xl tracking-[0.5em]"
-              placeholder="****"
-              autoFocus
-            />
-            {error && <p className="text-[#800000] text-xs font-bold">{error}</p>}
-            <div className="flex gap-3">
-              <button type="button" onClick={() => setShowPinInput(false)} className="flex-1 p-4 text-slate-400 font-bold">
-                Back
-              </button>
-              <button type="submit" className="flex-1 p-4 bg-[#D4AF37] text-white rounded-2xl font-bold">
-                Login
-              </button>
-            </div>
-          </form>
-        )}
+          <button
+            onClick={() => onSelectMode('admin')}
+            className="w-full flex items-center justify-center p-5 bg-[#800000] text-white rounded-2xl font-bold"
+          >
+            <Lock className="w-5 h-5 mr-3" /> Management (PIN: {ADMIN_PIN})
+          </button>
+        </div>
       </div>
     </div>
   );
